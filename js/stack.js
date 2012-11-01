@@ -6,7 +6,9 @@ var data = null,
 var categories = new Object();
 var max, min = 0;
 var width = 800,
-    height = 400;
+    height = 400,
+    minYear = 1997;
+
 
 var vis = d3.select("#chart")
   .append("svg")
@@ -18,7 +20,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   max = d3.max(json, function(d){ return d._id.funded_year});
   min = d3.min(json, function(d){ return d._id.funded_year});
   //Set year range as m
-  m = max - min + 1;
+  m = max - minYear + 1;
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.category_code){
       categories[json[i]._id.category_code] = true;
@@ -35,11 +37,10 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   // n = categories
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
-    if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined){
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
+    if(json[i]._id.funded_year >= minYear){
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].y += json[i].value.total_amount;
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category = json[i]._id.category_code;
     }
-    else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
-    new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category = json[i]._id.category_code;
   }
   data = d3.layout.stack()(new_data);
   for(var i = 0; i < data.length; i++){
@@ -85,13 +86,9 @@ var labels = vis.selectAll("text.label")
     .attr("dx", x({x: .45}))
     .attr("dy", ".71em")
     .attr("text-anchor", "middle")
-    .text(function(d, i) { return i + min; });
+    .text(function(d, i) { return i + minYear; });
 
 });
-
-
-
-
 
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
