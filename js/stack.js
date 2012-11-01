@@ -14,7 +14,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   max = d3.max(json, function(d){ return d._id.funded_year});
   min = d3.min(json, function(d){ return d._id.funded_year});
   //Set year range as m
-  m = max - min;
+  m = max - min + 1;
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.category_code){
       categories[json[i]._id.category_code] = true;
@@ -23,19 +23,20 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   categories = d3.keys(categories);
   n = categories.length;
   for(var i = 0; i < n; i++){
-    new_data[i] = new Array(n);
+    new_data[i] = new Array(m);
+    for(var j = 0; j < new_data[i].length; j++){
+      new_data[i][j] = {x:j, y:0}
+    }
   }
   // n = categories
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
-    if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] === undefined){
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] = json[i].value.total_amount;
+    if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined){
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
     }
-    else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] += json[i].value.total_amount;
+    else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
   }
   data = d3.layout.stack()(new_data);
-});
-
 var width = 800,
     height = 500,
     mx = m - 1,
@@ -63,6 +64,9 @@ vis.selectAll("path")
     .transition()
       .duration(500)
       .attr("d", area);
+});
+
+
 
 // var margin = 20,
 //     width = 600,
