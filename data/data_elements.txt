@@ -1,0 +1,7 @@
+Company
+  - Name
+  - Category  
+  - Year founding
+  - Funding / Funding Rounds
+  - Filtered by private companies
+  - Total money raised`
