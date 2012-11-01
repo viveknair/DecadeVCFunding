@@ -1,42 +1,70 @@
-
-
-var n = 6, // number of layers
+var n = 0, // number of layers
     m = 20; // number of samples per layer
 
 
 m *= 2;
 
-var data = d3.layout.stack()(generateData(n,m)),
-    data1 = d3.layout.stack()(generateData(n,m)),
+var data = null,
     color = d3.scale.category20();
+var categories = new Object();
+var max, min = 0;
 
-var width = 800,
-    height = 500,
-    mx = m - 1,
-    my = d3.max(data, function(d) {
-      return d3.max(d, function(d) {
-        return d.y0 + d.y;
+d3.json("data/json/crunchbase_data.json", function(json) {
+  var new_data = new Array();
+  max = d3.max(json, function(d){ return d._id.funded_year});
+  min = d3.min(json, function(d){ return d._id.funded_year});
+  //Set year range as m
+  m = max - min;
+  for(var i = 0; i < json.length; i++){
+    if(json[i]._id.category_code){
+      categories[json[i]._id.category_code] = true;
+    }
+  };
+  categories = d3.keys(categories);
+  n = categories.length;
+  for(var i = 0; i < n; i++){
+    new_data[i] = new Array(n);
+  }
+  // n = categories
+  // m = year range starting at min
+  for(var i = 0; i < json.length; i++){
+    if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] === undefined){
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] = json[i].value.total_amount;
+    }
+    else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] += json[i].value.total_amount;
+  }
+  data = d3.layout.stack()(new_data);
+  var width = 800,
+      height = 500,
+      mx = m - 1,
+      my = d3.max(data, function(d) {
+        return d3.max(d, function(d) {
+          return d.y0 + d.y;
+        });
       });
-    });
 
-var area = d3.svg.area()
-    .x(function(d) { return d.x * width / mx; })
-    .y0(function(d) { return height - d.y0 * height / my; })
-    .y1(function(d) { return height - (d.y + d.y0) * height / my; })
-    .interpolate(['linear']);
+  var area = d3.svg.area()
+      .x(function(d) { return d.x * width / mx; })
+      .y0(function(d) { return height - d.y0 * height / my; })
+      .y1(function(d) { return height - (d.y + d.y0) * height / my; })
+      .interpolate(['linear']);
 
-var vis = d3.select("#chart")
-  .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  var vis = d3.select("#chart")
+    .append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-vis.selectAll("path")
-    .data(data)
-  .enter().append("path")
-    .style("fill", function() { return color(Math.random()); })
-    .transition()
-      .duration(500)
-      .attr("d", area);
+  vis.selectAll("path")
+      .data(data)
+    .enter().append("path")
+      .style("fill", function() { return color(Math.random()); })
+      .transition()
+        .duration(500)
+        .attr("d", area);
+});
+
+
+
 // var margin = 20,
 //     width = 600,
 //     height = 500 - .5 - margin,
@@ -115,6 +143,7 @@ vis.selectAll("path")
 //     .attr("x2", width - x({x: .1}))
 //     .attr("y1", height)
 //     .attr("y2", height);
+
 function generateData(n,m){
   var test_data = [];
   for(var i = 0; i < n; i++){
@@ -130,88 +159,3 @@ function generateData(n,m){
   return test_data;
 }
 
-function transitionGroup() {
-  var group = d3.selectAll("#chart");
-
-  group.select("#group")
-      .attr("class", "first active");
-
-  group.select("#stack")
-      .attr("class", "last");
-
-  group.selectAll("g.layer rect")
-    .transition()
-      .duration(500)
-      .delay(function(d, i) { return (i % m) * 10; })
-      .attr("x", function(d, i) { return x({x: .9 * ~~(i / m) / n}); })
-      .attr("width", x({x: .9 / n}))
-      .each("end", transitionEnd);
-
-  function transitionEnd() {
-    d3.select(this)
-      .transition()
-        .duration(500)
-        .attr("y", function(d) { return height - y2(d); })
-        .attr("height", y2);
-  }
-}
-
-function transitionStack() {
-  var stack = d3.select("#chart");
-
-  stack.select("#group")
-      .attr("class", "first");
-
-  stack.select("#stack")
-      .attr("class", "last active");
-
-  stack.selectAll("g.layer rect")
-    .transition()
-      .duration(500)
-      .delay(function(d, i) { return (i % m) * 10; })
-      .attr("y", y1)
-      .attr("height", function(d) { return y0(d) - y1(d); })
-      .each("end", transitionEnd);
-
-  function transitionEnd() {
-    d3.select(this)
-      .transition()
-        .duration(500)
-        .attr("x", 0)
-        .attr("width", x({x: .9}));
-  }
-}
-
-/* Inspired by Lee Byron's test data generator. */
-function stream_layers(n, m, o) {
-  if (arguments.length < 3) o = 0;
-  function bump(a) {
-    var x = 1 / (.1 + Math.random()),
-        y = 2 * Math.random() - .5,
-        z = 10 / (.1 + Math.random());
-    for (var i = 0; i < m; i++) {
-      var w = (i / m - y) * z;
-      a[i] += x * Math.exp(-w * w);
-    }
-  }
-  return d3.range(n).map(function() {
-      var a = [], i;
-      for (i = 0; i < m; i++) a[i] = o + o * Math.random();
-      for (i = 0; i < 5; i++) bump(a);
-      return a.map(stream_index);
-    });
-}
-
-/* Another layer generator using gamma distributions. */
-function stream_waves(n, m) {
-  return d3.range(n).map(function(i) {
-    return d3.range(m).map(function(j) {
-        var x = 20 * j / m - i / 3;
-        return 2 * x * Math.exp(-.5 * x);
-      }).map(stream_index);
-    });
-}
-
-function stream_index(d, i) {
-  return {x: i, y: Math.max(0, d)};
-}
