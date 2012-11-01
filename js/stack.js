@@ -1,20 +1,20 @@
 var n = 0, // number of layers
     m = 20; // number of samples per layer
 
-m *= 2;
-
 var data = null,
     color = d3.scale.category20();
 var categories = new Object();
 var max, min = 0;
+var width = 800,
+    height = 400,
+    minYear = 1997;
 
 d3.json("data/json/crunchbase_data.json", function(json) {
   var new_data = new Array();
   max = d3.max(json, function(d){ return d._id.funded_year});
   min = d3.min(json, function(d){ return d._id.funded_year});
-  console.log( "The minimum is " + min );
-  //Set year range as m and one more to hold the metadata
-  m = max - min + 1;
+  //Set year range as m
+  m = max - minYear + 1;
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.category_code){
       categories[json[i]._id.category_code] = { total_amount: 0 };
@@ -32,27 +32,20 @@ d3.json("data/json/crunchbase_data.json", function(json) {
 
   // n = categories
   // m = year range starting at min
-  for(var i = 0; i < json.length; i++) {
-    if (key_categories.indexOf(json[i]._id.category_code)) {
-      categories[json[i]._id.category_code].total_amount += json[i]._id.funded_year
-    }
-    if(new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined) {
-      // Individual cell data updating
-      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
-      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code; 
-      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].funding_rounds = json[i].value.number_funding_rounds; 
-    } else {
-      // Individual cell data updating
-      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
-      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
-      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].funding_rounds = json[i].value.number_funding_rounds; 
+  for(var i = 0; i < json.length; i++){
+    if(json[i]._id.funded_year >= minYear){
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].y += json[i].value.total_amount;
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category = json[i]._id.category_code;
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category_code = json[i]._id.category_code;
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].funding_rounds = json[i].value.number_funding_rounds; 
     }
   }
   data = d3.layout.stack()(new_data);
+  for(var i = 0; i < data.length; i++){
+    data[i].category = categories[i];
+  }
 
-var width = 800,
-    height = 500,
-    mx = m - 1,
+var mx = m - 1,
     my = d3.max(data, function(d) {
       return d3.max(d, function(d) {
         return d.y0 + d.y;
@@ -196,7 +189,32 @@ vis.selectAll("path.industries")
     .transition()
       .duration(500)
       .attr("d", area)
+
+    var y_scale = d3.scale.linear().domain([0, my]).range([height,0]);      
+    var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
+    vis.append("g")
+      .attr("transform", "translate(" + [50, 0] + ")")
+      .call(y_axis);
+    
+    var x = function(d) { return d.x * width / m; }
+    var labels = vis.selectAll("text.label")
+      .data(data[0])
+    .enter().append("text")
+      .attr("class", "label")
+      .attr("x", x)
+      .attr("y", height + 6)
+      .attr("dx", x({x: .45}))
+      .attr("dy", ".71em")
+      .attr("text-anchor", "middle")
+      .text(function(d, i) { return i + minYear; });
+
+
 });
+
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 function generateData(n,m){
   var test_data = [];
