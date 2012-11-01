@@ -34,36 +34,35 @@ d3.json("data/json/crunchbase_data.json", function(json) {
     else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min] += json[i].value.total_amount;
   }
   data = d3.layout.stack()(new_data);
-  var width = 800,
-      height = 500,
-      mx = m - 1,
-      my = d3.max(data, function(d) {
-        return d3.max(d, function(d) {
-          return d.y0 + d.y;
-        });
-      });
-
-  var area = d3.svg.area()
-      .x(function(d) { return d.x * width / mx; })
-      .y0(function(d) { return height - d.y0 * height / my; })
-      .y1(function(d) { return height - (d.y + d.y0) * height / my; })
-      .interpolate(['linear']);
-
-  var vis = d3.select("#chart")
-    .append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-  vis.selectAll("path")
-      .data(data)
-    .enter().append("path")
-      .style("fill", function() { return color(Math.random()); })
-      .transition()
-        .duration(500)
-        .attr("d", area);
 });
 
+var width = 800,
+    height = 500,
+    mx = m - 1,
+    my = d3.max(data, function(d) {
+      return d3.max(d, function(d) {
+        return d.y0 + d.y;
+      });
+    });
 
+var area = d3.svg.area()
+    .x(function(d) { return d.x * width / mx; })
+    .y0(function(d) { return height - d.y0 * height / my; })
+    .y1(function(d) { return height - (d.y + d.y0) * height / my; })
+    .interpolate(['linear']);
+
+var vis = d3.select("#chart")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+vis.selectAll("path")
+    .data(data)
+  .enter().append("path")
+    .style("fill", function() { return color(Math.random()); })
+    .transition()
+      .duration(500)
+      .attr("d", area);
 
 // var margin = 20,
 //     width = 600,
