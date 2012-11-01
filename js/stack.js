@@ -13,36 +13,42 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   max = d3.max(json, function(d){ return d._id.funded_year});
   min = d3.min(json, function(d){ return d._id.funded_year});
   console.log( "The minimum is " + min );
-  //Set year range as m
+  //Set year range as m and one more to hold the metadata
   m = max - min + 1;
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.category_code){
-      categories[json[i]._id.category_code] = true;
+      categories[json[i]._id.category_code] = { total_amount: 0 };
     }
   };
-  categories = d3.keys(categories);
-  n = categories.length;
+  key_categories = d3.keys(categories);
+  n = key_categories.length;
   for(var i = 0; i < n; i++){
     new_data[i] = new Array(m);
     for(var j = 0; j < new_data[i].length; j++){
-      new_data[i][j] = {x:j, y:0, category_code : null }
+      // Category code for a certain year
+      new_data[i][j] = {x:j, y:0, category_code : null, funding_rounds : 0 }
     }
   }
 
   // n = categories
   // m = year range starting at min
-  for(var i = 0; i < json.length; i++){
-    if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined){
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code; 
+  for(var i = 0; i < json.length; i++) {
+    if (key_categories.indexOf(json[i]._id.category_code)) {
+      categories[json[i]._id.category_code].total_amount += json[i]._id.funded_year
+    }
+    if(new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined) {
+      // Individual cell data updating
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code; 
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].funding_rounds = json[i].value.number_funding_rounds; 
     } else {
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
+      // Individual cell data updating
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
+      new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].funding_rounds = json[i].value.number_funding_rounds; 
     }
   }
   data = d3.layout.stack()(new_data);
-
-  console.log(data);
 
 var width = 800,
     height = 500,
@@ -70,10 +76,12 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('height', 600)
   .attr('transform', 'translate(870, 30)')
 
-vis_sidebar.selectAll('circle.number_breakdown')
-  .data(categories)
+vis_sidebar.selectAll('circle.industry_circle')
+  .data(key_categories)
  .enter().append('circle')
-  .attr('r', 20)
+  .attr('class', function(d,i) {
+    return 'industry-' + d;
+  }) .attr('r', 20)
   .attr('transform', function(d,i) {
     var x = (i >= 8) ? 200 : 0; 
     return 'translate(' + x + ',' + (50 * (i % 8))  +')'; 
@@ -97,9 +105,12 @@ vis_sidebar.selectAll('circle.number_breakdown')
   })
 
 
-vis_sidebar.selectAll('text.number_breakdown_text')
-  .data(categories)
+vis_sidebar.selectAll('text.industry_text')
+  .data(key_categories)
  .enter().append('svg:text')
+  .attr('class', function(d,i) {
+     return 'industry-' + d;
+  })
   .text(function(d,i) {
     return String(d);
   })
@@ -107,104 +118,85 @@ vis_sidebar.selectAll('text.number_breakdown_text')
     var x = (i >= 8) ? 200 : 0; 
     return 'translate(' + (x + 40) + ',' + (50 * (i % 8))  +')'; 
   })
-  .style('fill', function(d,i) {
-    return color(i);
-  })
+  .style('fill', '#555')
 
 var vis = vis_wrapper.append('svg:g')
   .attr('class', 'main_visualization')
   .attr("width", width)
   .attr("height", height);
 
-vis.selectAll("path")
+vis.selectAll("path.industries")
     .data(data)
   .enter().append("path")
+    .attr('class', function(d,i) {
+      return 'industry-' + d[m-1].category_code;
+    })
     .style("fill", function(d, i) { 
       return color(i); 
     })
+    .on('mouseover', function(d,i) {
+      var consideration_element = d;
+
+      d3.selectAll('circle')
+        .each(function() {
+          var circle = d3.select(this);
+          if (circle.attr('class') == 'industry-' + d[m-1].category_code) {
+            circle
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0);
+          } else {
+            circle
+              .transition()
+              .duration(200)
+              .style('opacity', 0.2);
+          } 
+        })
+
+      d3.selectAll('text')
+        .each(function() {
+          var circle = d3.select(this);
+          if (circle.attr('class') == 'industry-' + d[m-1].category_code) {
+            circle
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0);
+          } else {
+            circle
+              .transition()
+              .duration(200)
+              .style('opacity', 0.2);
+          } 
+        })
+    })
+    .on('mouseout', function(d,i) {
+      var consideration_element = d;
+
+      d3.selectAll('circle')
+        .each(function() {
+          var circle = d3.select(this);
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 1.0);
+        })
+
+      d3.selectAll('text')
+        .each(function() {
+          var text = d3.select(this);
+          text
+            .transition()
+            .duration(200)
+            .style('opacity', 1.0);
+        })
+
+      
+    })
+
     .transition()
       .duration(500)
-      .attr("d", area);
+      .attr("d", area)
 });
-
-// var margin = 20,
-//     width = 600,
-//     height = 500 - .5 - margin,
-//     mx = m,
-//     my = d3.max(data, function(d) {
-//       return d3.max(d, function(d) {
-//         return d.y0 + d.y;
-//       });
-//     }),
-//     mz = d3.max(data, function(d) {
-//       return d3.max(d, function(d) {
-//         return d.y;
-//       });
-//     }),
-//     x = function(d) { return d.x * width / mx; },
-//     y0 = function(d) { return height - d.y0 * height / my; },
-//     y1 = function(d) { return height - (d.y + d.y0) * height / my; },
-//     y2 = function(d) { return d.y * height / mz; }; // or `my` to not rescale
-
-// var x_scale = d3.scale.linear().domain([0, mx]).range([0, width]);
-// var y_scale = d3.scale.linear().domain([0, my]).range([0,height]);
-
-// var x_axis = d3.svg.axis().scale(x_scale).orient("bottom").ticks(64);
-// var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
-
-// var vis = d3.select("#chart")
-//   .append("svg")
-//     .attr("width", width)
-//     .attr("height", height + margin);
-
-// vis.append("g")
-//   .call(x_axis)
-//   .attr("transform", "translate(" + [0, 0] + ")scale(1,-1)");
-// vis.append("g")
-//   .attr("transform", "translate(" + [0, height] + ")scale(1,-1)")
-//   .call(y_axis);
-
-// var layers = vis.selectAll("g.layer")
-//     .data(data)
-//   .enter().append("g")
-//     .style("fill", function(d, i) { return color(i / (n - 1)); })
-//     .attr("class", "layer");
-
-// var bars = layers.selectAll("g.bar")
-//     .data(function(d) { return d; })
-//   .enter().append("g")
-//     .attr("class", function(d,i){ return "bar num" + i})
-//     .attr("data-time", function(d,i){ return i})
-//     .attr("transform", function(d) { return "translate(" + x(d) + ",0)"; })
-//     .on("mouseover", function(d,i){ vis.selectAll('.num' + i).style('opacity', .5) })
-//     .on("mouseout", function(d,i){ vis.selectAll('.num' + i).style('opacity', 1) });
-
-// bars.append("rect")
-//     .attr("width", x({x: .9}))
-//     .attr("x", 0)
-//     .attr("y", height)
-//     .attr("height", 0)
-//   .transition()
-//     .delay(function(d, i) { return i * 10; })
-//     .attr("y", y1)
-//     .attr("height", function(d) { return y0(d) - y1(d); });
-
-// var labels = vis.selectAll("text.label")
-//     .data(data[0])
-//   .enter().append("text")
-//     .attr("class", "label")
-//     .attr("x", x)
-//     .attr("y", height + 6)
-//     .attr("dx", x({x: .45}))
-//     .attr("dy", ".71em")
-//     .attr("text-anchor", "middle")
-//     .text(function(d, i) { return i; });
-
-// vis.append("line")
-//     .attr("x1", 0)
-//     .attr("x2", width - x({x: .1}))
-//     .attr("y1", height)
-//     .attr("y2", height);
 
 function generateData(n,m){
   var test_data = [];
