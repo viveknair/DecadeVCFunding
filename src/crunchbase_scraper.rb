@@ -13,7 +13,7 @@ def scrape_crunchbase_funding(path_to_companies)
   # Mongo connection
   mongo_connection = Mongo::Connection.new
   database = mongo_connection['crunchbase_database']
-  coll = database['initial_collection']
+  coll = database['secondary_collection']
   
   pp "Size of companies is #{parsed_json.size}"
   pbar = ProgressBar.new("Scraping Count", 102000)
@@ -38,18 +38,13 @@ def scrape_crunchbase_funding(path_to_companies)
   
     company['total_money_raised'] = parsed_response['total_money_raised']
 
-    funded_years = []
-    raised_amounts = []
-
     parsed_response['funding_rounds'].each do |round|
-      funded_years.push(round['funded_year'])
-      raised_amounts.push(round['raised_amount'])
+      new_company = company.dup
+      new_company['funded_year'] = round['funded_year']
+      new_company['raised_amount'] = round['raised_amount']
+      coll.insert(new_company)
     end
-    company['funding_years'] = funded_years
-    company['raised_amount'] = raised_amounts
 
-
-    coll.insert(company)
 
     pbar.inc
 
