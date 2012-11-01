@@ -69,6 +69,12 @@ vis.selectAll("path")
       .duration(500)
       .attr("d", area);
 
+var y_scale = d3.scale.linear().domain([0, my]).range([height,0]);      
+var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
+vis.append("g")
+  .attr("transform", "translate(" + [50, 0] + ")")
+  .call(y_axis);
+
 var x = function(d) { return d.x * width / m; }
 var labels = vis.selectAll("text.label")
     .data(data[0])

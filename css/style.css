@@ -301,6 +301,10 @@ body{
   font: 10px sans-serif;
 }
 
+.domain{
+  display:none;
+}
+
 a.btn{
   text-decoration:none;
   padding: .5em;
