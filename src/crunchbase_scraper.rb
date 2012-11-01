@@ -26,8 +26,16 @@ def scrape_crunchbase_funding(path_to_companies)
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
            Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
       p "The thing fucking fucked up. Idk..."
+      next
     end
-    parsed_response = JSON.parse(response)
+
+    begin
+      parsed_response = JSON.parse(response)
+    rescue
+      p "The json dun fucked up."
+      next
+    end
+  
     company['total_money_raised'] = parsed_response['total_money_raised']
 
     funded_years = []
