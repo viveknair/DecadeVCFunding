@@ -25,7 +25,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   for(var i = 0; i < n; i++){
     new_data[i] = new Array(m);
     for(var j = 0; j < new_data[i].length; j++){
-      new_data[i][j] = {x:j, y:0, category_code : null}
+      new_data[i][j] = {x:j, y:0, category_code : null }
     }
   }
 
@@ -33,11 +33,9 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
     if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined){
-      console.log(json[i]._id.category_code);
       new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
-      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
-    }
-    else {
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code; 
+    } else {
       new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
       new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
     }
@@ -59,7 +57,7 @@ var area = d3.svg.area()
     .x(function(d) { return d.x * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; })
-    .interpolate(['linear']);
+    .interpolate(['basis']);
 
 var vis_wrapper = d3.select("#chart")
   .append("svg")
@@ -69,13 +67,49 @@ var vis_wrapper = d3.select("#chart")
 var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('class', 'sidebar_visualization')
   .attr('width', 300)
-  .attr('height', 600);
+  .attr('height', 600)
+  .attr('transform', 'translate(870, 30)')
 
 vis_sidebar.selectAll('circle.number_breakdown')
   .data(categories)
- .enter().append('svg:rect')
-  .attr('width', 100)
-  .attr('height', 100);
+ .enter().append('circle')
+  .attr('r', 20)
+  .attr('transform', function(d,i) {
+    var x = (i >= 8) ? 200 : 0; 
+    return 'translate(' + x + ',' + (50 * (i % 8))  +')'; 
+  })
+  .style('fill', function(d,i) {
+    return color(i);
+  })
+  .on('mouseover', function() {
+    d3.select(this)
+      .transition()
+      .duration(500)
+      .style('fill', 'turquoise')
+  })
+  .on('mouseout', function(d,i) {
+    d3.select(this)
+      .transition()
+      .duration(500)
+      .style('fill', function() {
+        return color(i);
+      }) 
+  })
+
+
+vis_sidebar.selectAll('text.number_breakdown_text')
+  .data(categories)
+ .enter().append('svg:text')
+  .text(function(d,i) {
+    return String(d);
+  })
+  .attr('transform', function(d,i) {
+    var x = (i >= 8) ? 200 : 0; 
+    return 'translate(' + (x + 40) + ',' + (50 * (i % 8))  +')'; 
+  })
+  .style('fill', function(d,i) {
+    return color(i);
+  })
 
 var vis = vis_wrapper.append('svg:g')
   .attr('class', 'main_visualization')
