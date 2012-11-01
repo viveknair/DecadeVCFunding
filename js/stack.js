@@ -1,7 +1,6 @@
 var n = 0, // number of layers
     m = 20; // number of samples per layer
 
-
 m *= 2;
 
 var data = null,
@@ -13,6 +12,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   var new_data = new Array();
   max = d3.max(json, function(d){ return d._id.funded_year});
   min = d3.min(json, function(d){ return d._id.funded_year});
+  console.log( "The minimum is " + min );
   //Set year range as m
   m = max - min + 1;
   for(var i = 0; i < json.length; i++){
@@ -25,18 +25,27 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   for(var i = 0; i < n; i++){
     new_data[i] = new Array(m);
     for(var j = 0; j < new_data[i].length; j++){
-      new_data[i][j] = {x:j, y:0}
+      new_data[i][j] = {x:j, y:0, category_code : null}
     }
   }
+
   // n = categories
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
     if(new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y === undefined){
+      console.log(json[i]._id.category_code);
       new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
     }
-    else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
+    else {
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
+      new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category_code = json[i]._id.category_code;
+    }
   }
   data = d3.layout.stack()(new_data);
+
+  console.log(data);
+
 var width = 800,
     height = 500,
     mx = m - 1,
@@ -52,21 +61,37 @@ var area = d3.svg.area()
     .y1(function(d) { return height - (d.y + d.y0) * height / my; })
     .interpolate(['linear']);
 
-var vis = d3.select("#chart")
+var vis_wrapper = d3.select("#chart")
   .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  .attr('width', 1200)
+  .attr('height', 1200);
+
+var vis_sidebar = vis_wrapper.append('svg:g')
+  .attr('class', 'sidebar_visualization')
+  .attr('width', 300)
+  .attr('height', 600);
+
+vis_sidebar.selectAll('circle.number_breakdown')
+  .data(categories)
+ .enter().append('svg:rect')
+  .attr('width', 100)
+  .attr('height', 100);
+
+var vis = vis_wrapper.append('svg:g')
+  .attr('class', 'main_visualization')
+  .attr("width", width)
+  .attr("height", height);
 
 vis.selectAll("path")
     .data(data)
   .enter().append("path")
-    .style("fill", function() { return color(Math.random()); })
+    .style("fill", function(d, i) { 
+      return color(i); 
+    })
     .transition()
       .duration(500)
       .attr("d", area);
 });
-
-
 
 // var margin = 20,
 //     width = 600,
