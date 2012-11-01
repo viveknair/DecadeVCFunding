@@ -35,10 +35,14 @@ d3.json("data/json/crunchbase_data.json", function(json) {
       new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y = json[i].value.total_amount;
     }
     else new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].y += json[i].value.total_amount;
+    new_data[categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - min].category = json[i]._id.category_code;
   }
   data = d3.layout.stack()(new_data);
+  for(var i = 0; i < data.length; i++){
+    data[i].category = categories[i];
+  }
 var width = 800,
-    height = 500,
+    height = 400,
     mx = m - 1,
     my = d3.max(data, function(d) {
       return d3.max(d, function(d) {
@@ -55,15 +59,30 @@ var area = d3.svg.area()
 var vis = d3.select("#chart")
   .append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height + 50);
 
 vis.selectAll("path")
     .data(data)
   .enter().append("path")
     .style("fill", function() { return color(Math.random()); })
+    .on("mouseover", function(d){ d3.select("#desc").text(d.category); return d3.select(this).style("opacity", .5)})
+    .on("mouseout", function(d){ d3.select("#desc").text("Hover over an entry"); return d3.select(this).style("opacity", 1)})
     .transition()
       .duration(500)
       .attr("d", area);
+
+var x = function(d) { return d.x * width / m; }
+var labels = vis.selectAll("text.label")
+    .data(data[0])
+  .enter().append("text")
+    .attr("class", "label")
+    .attr("x", x)
+    .attr("y", height + 6)
+    .attr("dx", x({x: .45}))
+    .attr("dy", ".71em")
+    .attr("text-anchor", "middle")
+    .text(function(d, i) { return i + min; });
+
 });
 
 
