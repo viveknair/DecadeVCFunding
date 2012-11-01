@@ -6,7 +6,7 @@ mconn = Mongo::Connection.new
 data = mconn['crunchbase_database']
 coll = data['fourth_collection']
 
-raw_information = IO.binread('../data/json/accel.json')
+raw_information = IO.binread('../data/json/bc.json')
 parsed_json = JSON.parse(raw_information)
 
 parsed_json['investments'].each do |funding_round|
