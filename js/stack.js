@@ -74,19 +74,11 @@ vis_sidebar.selectAll('circle.industry_circle')
  .enter().append('circle')
   .attr('class', function(d,i) {
     return 'industry-' + d;
-  }) .attr('r', 20)
+  }) .attr('r', 7)
   .attr('transform', function(d,i) {
-    var x;
+    var x = 0;
     console.log('data index is ' + i );
-    if ( i < 16 && i >= 8  ) {
-      x = 200;   
-    } else if ( i >= 16 ) {
-      x = 400;   
-      console.log('We got a 400');
-    } else {
-      x = 0;
-    }
-    return 'translate(' + x + ',' + (50 * (i % 8))  +')'; 
+    return 'translate(' + x + ',' + (20 * i)  +')'; 
   })
   .style('fill', function(d,i) {
     return color(i);
@@ -117,18 +109,8 @@ vis_sidebar.selectAll('text.industry_text')
     return String(d);
   })
   .attr('transform', function(d,i) {
-    var x;
-    console.log('data index is ' + i );
-    if ( i < 16 && i >= 8  ) {
-      x = 200;   
-    } else if ( i >= 16 ) {
-      x = 400;   
-      console.log('We got a 400');
-    } else {
-      x = 0;
-    }
-
-    return 'translate(' + (x + 40) + ',' + (50 * (i % 8))  +')'; 
+    var x = 0;
+    return 'translate(' + (x + 40) + ',' + (20.3 * i)  +')'; 
   })
   .style('fill', '#555')
 
@@ -210,7 +192,7 @@ vis.selectAll("path.industries")
     var y_scale = d3.scale.linear().domain([0, my]).range([height,0]);      
     var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
     vis.append("g")
-      .attr("transform", "translate(" + [50, 0] + ")")
+      .attr("transform", "translate(" + [80, 0] + ")")
       .call(y_axis);
     
     var x = function(d) { return d.x * width / m; }
