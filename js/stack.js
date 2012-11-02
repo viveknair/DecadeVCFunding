@@ -195,47 +195,6 @@ vis.selectAll("path.industries")
     .style("fill", function(d, i) { 
       return color(i); 
     })
-    .on('mouseover', function(d,i) {
-      var consideration_element = d;
-
-
-      d3.selectAll('text.text-element-industry')
-        .each(function() {
-          var circle = d3.select(this);
-          if (circle.attr('class') == 'industry-' + d[m-1].category_code + ' text-element-industry') {
-            circle
-              .transition()
-              .duration(200)
-              .style('opacity', 1.0);
-          } else {
-            circle
-              .transition()
-              .duration(200)
-              .style('opacity', 0.1);
-          } 
-        })
-    })
-    .on('mouseout', function(d,i) {
-      var consideration_element = d;
-
-      d3.selectAll('circle')
-        .each(function() {
-          var circle = d3.select(this);
-          circle
-            .transition()
-            .duration(200)
-            .style('opacity', 1.0);
-        })
-
-      d3.selectAll('text')
-        .each(function() {
-          var text = d3.select(this);
-          text
-            .transition()
-            .duration(200)
-            .style('opacity', 1.0);
-        })
-    })
 
     .transition()
       .duration(500)
