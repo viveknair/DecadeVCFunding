@@ -10,9 +10,9 @@ var width = 800,
     containerWidth = 1400,
     containerHeight = 500,
     minYear = 2002,
-    vizMarginLeft = 120,
+    vizMarginLeft = 180,
     vizMarginTop = 20,
-    sidebarMarginLeft = 975,
+    sidebarMarginLeft = 1045,
     sidebarMarginTop = 40;
 
 var categoryMapping = {
@@ -237,7 +237,11 @@ var vis = vis_wrapper.append('svg:g')
   .attr("height", height)
   .attr("transform", 'translate(' + [vizMarginLeft , vizMarginTop] + ')'); 
 
-vis.selectAll("line")
+var grid_lines = vis.append('svg:g')
+  .attr('class', 'grid_lines_group')
+
+grid_lines
+  .selectAll("line")
     .data(y_scale.ticks(10))
     .enter().append("line")
     .attr("class", "cols")
@@ -246,6 +250,23 @@ vis.selectAll("line")
     .attr("y1", y_scale)
     .attr("y2", y_scale)
     .style("stroke", "#dddddd");
+
+var y_axis_label = vis.append('svg:g')
+  .attr('class', 'y_label')
+
+y_axis_label
+  .append('svg:text')
+  .text('Funding Amount in Dollars')
+  .attr('transform', 'rotate(270) translate(' + [-240, -130] + ')');
+
+var x_axis_label = vis.append('svg:g')
+  .attr('class', 'x_label')
+
+x_axis_label
+  .append('svg:text')
+  .text('Year of Funding')
+  .attr('transform', 'translate(' + [containerWidth / 4, containerHeight - 60] + ')');
+
 
 vis.selectAll("path.industries")
     .data(data)
