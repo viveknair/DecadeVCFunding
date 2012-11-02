@@ -7,9 +7,13 @@ var categories = new Object();
 var max, min = 0;
 var width = 800,
     height = 400,
+    containerWidth = 1400,
+    containerHeight = 500,
     minYear = 2002,
     vizMarginLeft = 120,
-    sidebarMarginLeft = 975;
+    vizMarginTop = 20,
+    sidebarMarginLeft = 975,
+    sidebarMarginTop = 40;
 
 var categoryMapping = {
   'advertising' : 'Advertising',
@@ -78,6 +82,9 @@ var mx = m - 1,
       });
     });
 
+var y_scale = d3.scale.linear().domain([0, my]).range([height,0]).nice();      
+var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
+
 var area = d3.svg.area()
     .x(function(d) { return d.x * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
@@ -86,17 +93,17 @@ var area = d3.svg.area()
 
 var vis_wrapper = d3.select("#chart")
   .append("svg")
-  .attr('width', 1400)
-  .attr('height', 1200)
+  .attr('width', containerWidth)
+  .attr('height', containerHeight)
   .append("svg:g")
   .attr('class', 'complete_visualization')
-  .attr('tranform', 'translate(' + [100, 0] + ')');
+  .attr('tranform', 'translate(' + [vizMarginLeft, vizMarginTop] + ')');
 
 var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('class', 'sidebar_visualization')
   .attr('width', 300)
   .attr('height', 600)
-  .attr('transform', 'translate('+ sidebarMarginLeft + ', 30)')
+  .attr('transform', 'translate('+ [sidebarMarginLeft, sidebarMarginTop] + ')')
 
 var legend_groups = vis_sidebar.selectAll('g.industry_group')
   .data(key_categories)
@@ -221,7 +228,17 @@ var vis = vis_wrapper.append('svg:g')
   .attr('class', 'main_visualization')
   .attr("width", width)
   .attr("height", height)
-  .attr("transform", 'translate(' + [vizMarginLeft , 0] + ')'); 
+  .attr("transform", 'translate(' + [vizMarginLeft , vizMarginTop] + ')'); 
+
+vis.selectAll("line")
+    .data(y_scale.ticks(10))
+    .enter().append("line")
+    .attr("class", "cols")
+    .attr("x1", 5)
+    .attr("x2", width) 
+    .attr("y1", y_scale)
+    .attr("y2", y_scale)
+    .style("stroke", "#ccc");
 
 vis.selectAll("path.industries")
     .data(data)
@@ -237,8 +254,7 @@ vis.selectAll("path.industries")
       .duration(500)
       .attr("d", area)
 
-    var y_scale = d3.scale.linear().domain([0, my]).range([height,0]);      
-    var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
+
     vis.append("g")
       .attr("transform", "translate(" + [10, 0] + ")")
       .call(y_axis);
