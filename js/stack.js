@@ -233,24 +233,3 @@ vis.selectAll("path.industries")
       .text(function(d, i) { return i + minYear; });
 
 });
-
-
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-function generateData(n,m){
-  var test_data = [];
-  for(var i = 0; i < n; i++){
-    var arr = new Array();
-    for(var j = 0; j < m * 2; j++){
-      var current = .2 + Math.random();
-      arr.push({x:j, y:current});
-      j += 1
-      arr.push({x:j+.4, y:current});
-    }
-    test_data.push(arr);
-  } 
-  return test_data;
-}
-
