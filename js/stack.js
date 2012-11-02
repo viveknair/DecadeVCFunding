@@ -72,9 +72,15 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('height', 600)
   .attr('transform', 'translate(1100, 30)')
 
-vis_sidebar.selectAll('circle.industry_circle')
+var legend_groups = vis_sidebar.selectAll('g.industry_group')
   .data(key_categories)
- .enter().append('circle')
+ .enter().append('svg:g')
+  .attr('class', function(d,i) {
+    return 'industry-' + d ;
+  })  
+
+var circle_legend = legend_groups
+  .append('circle')
   .attr('class', function(d,i) {
     return 'industry-' + d;
   }) .attr('r', 7)
@@ -168,10 +174,8 @@ vis_sidebar.selectAll('circle.industry_circle')
 
   })
 
-
-vis_sidebar.selectAll('text.industry_text')
-  .data(key_categories)
- .enter().append('svg:text')
+var text_legend = legend_groups
+  .append('svg:text')
   .attr('class', function(d,i) {
      return 'industry-' + d + ' text-element-industry';
   })
