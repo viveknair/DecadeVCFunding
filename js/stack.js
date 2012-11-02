@@ -6,6 +6,7 @@ var data = null,
    
 var categories = new Object();
 var new_categories = [];
+var global_categories =[];
 var max, min = 0;
 var width = 600,
     height = 400,
@@ -335,6 +336,12 @@ vis.selectAll("path.industries")
           height: height,
       }).style("opacity", 0);
     new_categories.sort(category_sort);
+    for( var i = 0; i < new_categories.length; i++){
+      global_categories[i] = {
+        total_amount: new_categories[i].total_amount,
+        category_code: new_categories[i].category_code
+      }
+    }
     redrawLegend();
 });
 
@@ -367,8 +374,6 @@ function retotalNewCategories(year) {
 
   }
 }
-
-console.log(new_categories);
 
 function redrawLegend(){
   legend_groups.data(new_categories, function(d){ return d.category_code })
