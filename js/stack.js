@@ -47,7 +47,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   m = max - minYear + 1;
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.category_code &&  omittedCategories.indexOf(json[i]._id.category_code) === -1){
-      categories[json[i]._id.category_code] = { total_amount: 0 };
+      categories[json[i]._id.category_code] = { category_code: json[i]._id.category_code, total_amount: 0 };
     }
   };
   key_categories = d3.keys(categories);
@@ -60,10 +60,12 @@ d3.json("data/json/crunchbase_data.json", function(json) {
     }
   }
 
+
   // n = categories
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.funded_year >= minYear && (key_categories.indexOf(json[i]._id.category_code) !== -1)){
+      categories[json[i]._id.category_code].total_amount += json[i].value.total_amount;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].y += json[i].value.total_amount;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category = json[i]._id.category_code;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category_code = json[i]._id.category_code;
@@ -74,6 +76,18 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   for(var i = 0; i < data.length; i++){
     data[i].category = categories[i];
   }
+
+  new_categories = []
+  
+  for (var key in categories) {
+    if (categories.hasOwnProperty(key)) {
+      new_categories.push(categories[key]) 
+    }
+  }
+  
+  console.log(new_categories)
+
+
 
 var mx = m - 1,
     my = d3.max(data, function(d) {
@@ -89,7 +103,7 @@ var area = d3.svg.area()
     .x(function(d) { return d.x * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; })
-    .interpolate(['linear']);
+    .interpolate(['basis']);
 
 var vis_wrapper = d3.select("#chart")
   .append("svg")
@@ -105,19 +119,25 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('height', 600)
   .attr('transform', 'translate('+ [sidebarMarginLeft, sidebarMarginTop] + ')')
 
+console.log(categories);
 var legend_groups = vis_sidebar.selectAll('g.industry_group')
-  .data(key_categories)
+  .data(new_categories)
  .enter().append('svg:g')
   .attr('class', function(d,i) {
-    return 'industry-' + d ;
+    return 'industry-' + d.category_code ;
   })  
 
 legend_groups 
+    .attr('transform', function(d,i) {
+      console.log("translateing with this index: " + i );
+      var x = 0;
+      return 'translate(' + x + ',' + (23.5 * i)  +')'; 
+    })
    .on('mouseover', function(d, i) {
     d3.selectAll('path')
       .each(function() {
         var circle = d3.select(this);
-        if (circle.attr('class') == 'industry-' + d) {
+        if (circle.attr('class') == 'industry-' + d.category_code) {
           circle
             .transition()
             .duration(200)
@@ -133,7 +153,7 @@ legend_groups
     d3.selectAll('circle')
       .each(function() {
         var circle = d3.select(this);
-        if (circle.attr('class') == 'industry-' + d) {
+        if (circle.attr('class') == 'industry-' + d.category_code) {
           circle
             .transition()
             .duration(200)
@@ -149,7 +169,7 @@ legend_groups
     d3.selectAll('text.text-element-industry')
       .each(function() {
         var circle = d3.select(this);
-        if (circle.attr('class') == 'industry-' + d + ' text-element-industry') {
+        if (circle.attr('class') == 'industry-' + d.category_code + ' text-element-industry') {
           circle
             .transition()
             .duration(200)
@@ -192,20 +212,15 @@ legend_groups
           .style('opacity', 1.0);
       })
 
-
   })
 
 
 var circle_legend = legend_groups
   .append('circle')
   .attr('class', function(d,i) {
-    return 'industry-' + d;
-  }) .attr('r', 7)
-  .attr('transform', function(d,i) {
-    var x = 0;
-    console.log('data index is ' + i );
-    return 'translate(' + x + ',' + (20 * i)  +')'; 
+    return 'industry-' + d.category_code;
   })
+  .attr('r', 7)
   .style('fill', function(d,i) {
     return color(i);
   })
@@ -213,15 +228,12 @@ var circle_legend = legend_groups
 var text_legend = legend_groups
   .append('svg:text')
   .attr('class', function(d,i) {
-     return 'industry-' + d + ' text-element-industry';
+     return 'industry-' + d.category_code + ' text-element-industry';
   })
   .text(function(d,i) {
-    return String(categoryMapping[d]);
+    return String(categoryMapping[d.category_code]);
   })
-  .attr('transform', function(d,i) {
-    var x = 0;
-    return 'translate(' + (x + 20) + ',' + ((20.3 * i) + 4)  +')'; 
-  })
+  .attr('transform', 'translate(' + [15, 5] +')')
   .style('fill', '#555')
 
 var vis = vis_wrapper.append('svg:g')
