@@ -344,13 +344,15 @@ var category_sort = function(a,b){
 }
 
 function retotalNewCategories(year) {
+  for (var key in categories) {
+    categories[key].total_amount = 0;
+  }
+
+  new_categories.forEach( function(category) {
+    category.total_amount = 0;
+  })
+
   for( var i = 0 ; i < json.length; i ++) {
-    for (var key in categories) {
-      categories[key].total_amount = 0;
-    }
-    new_categories.forEach( function(category) {
-      category.total_amount = 0;
-    })
   
     if ( json[i]._id.funding_year == year ) {
       categories[json[id]._id.category_code] += json[id].value.total_amount;
