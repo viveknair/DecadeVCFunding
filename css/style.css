@@ -321,6 +321,17 @@ path, circle{
   opacity: .9;
 }
 
+#funding_rank {
+  position: relative; 
+  left: 800px;
+
+  color: #AAA; 
+}
+
+#funding_rank span {
+  color: #555; 
+}
+
 a.btn{
   text-decoration:none;
   padding: .5em;
@@ -333,4 +344,10 @@ a.btn{
 a.btn:hover{
   color: white;
   background-color: black;
+}
+
+#set_global {
+  position: relative; 
+  left: 820px; 
+  bottom: 60px; 
 }
