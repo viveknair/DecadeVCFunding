@@ -83,19 +83,86 @@ vis_sidebar.selectAll('circle.industry_circle')
   .style('fill', function(d,i) {
     return color(i);
   })
-  .on('mouseover', function() {
-    d3.select(this)
-      .transition()
-      .duration(500)
-      .style('fill', 'turquoise')
+  .on('mouseover', function(d, i) {
+    d3.selectAll('path')
+      .each(function() {
+        var circle = d3.select(this);
+        if (circle.attr('class') == 'industry-' + d) {
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 1.0);
+        } else {
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 0.1);
+        } 
+      })
+
+    d3.selectAll('circle')
+      .each(function() {
+        var circle = d3.select(this);
+        if (circle.attr('class') == 'industry-' + d) {
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 1.0);
+        } else {
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 0.1);
+        } 
+      })
+
+    d3.selectAll('text.text-element-industry')
+      .each(function() {
+        var circle = d3.select(this);
+        if (circle.attr('class') == 'industry-' + d + ' text-element-industry') {
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 1.0);
+        } else {
+          circle
+            .transition()
+            .duration(200)
+            .style('opacity', 0.1);
+        } 
+      })
+
   })
   .on('mouseout', function(d,i) {
-    d3.select(this)
-      .transition()
-      .duration(500)
-      .style('fill', function() {
-        return color(i);
-      }) 
+
+    d3.selectAll('path')
+      .each(function() {
+        var circle = d3.select(this);
+        circle
+          .transition()
+          .duration(200)
+          .style('opacity', 1.0);
+      })
+
+    d3.selectAll('circle')
+      .each(function() {
+        var circle = d3.select(this);
+        circle
+          .transition()
+          .duration(200)
+          .style('opacity', 1.0);
+      })
+
+    d3.selectAll('text')
+      .each(function() {
+        var circle = d3.select(this);
+        circle
+          .transition()
+          .duration(200)
+          .style('opacity', 1.0);
+      })
+
+
   })
 
 
@@ -131,21 +198,6 @@ vis.selectAll("path.industries")
     .on('mouseover', function(d,i) {
       var consideration_element = d;
 
-      d3.selectAll('circle')
-        .each(function() {
-          var circle = d3.select(this);
-          if (circle.attr('class') == 'industry-' + d[m-1].category_code) {
-            circle
-              .transition()
-              .duration(200)
-              .style('opacity', 1.0);
-          } else {
-            circle
-              .transition()
-              .duration(200)
-              .style('opacity', 0.2);
-          } 
-        })
 
       d3.selectAll('text.text-element-industry')
         .each(function() {
@@ -159,7 +211,7 @@ vis.selectAll("path.industries")
             circle
               .transition()
               .duration(200)
-              .style('opacity', 0.2);
+              .style('opacity', 0.1);
           } 
         })
     })
