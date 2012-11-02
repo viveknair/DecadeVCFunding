@@ -9,7 +9,7 @@ var width = 800,
     height = 400,
     minYear = 2002,
     vizMarginLeft = 120,
-    sidebarMarginLeft = 1000;
+    sidebarMarginLeft = 975;
 
 var categoryMapping = {
   'advertising' : 'Advertising',
@@ -213,7 +213,7 @@ var text_legend = legend_groups
   })
   .attr('transform', function(d,i) {
     var x = 0;
-    return 'translate(' + (x + 40) + ',' + (20.3 * i)  +')'; 
+    return 'translate(' + (x + 20) + ',' + ((20.3 * i) + 4)  +')'; 
   })
   .style('fill', '#555')
 
