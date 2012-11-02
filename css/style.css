@@ -298,8 +298,9 @@ body{
   font-family: 'Helvetica';
 }
 
-h1,h2,h3,h4,h5,h6,p{
+h1,h2,h3,h4,h5,h6,div,p{
   font-weight:300;
+  margin-bottom:0;
 }
 
 text {
@@ -322,14 +323,18 @@ path, circle{
 }
 
 #funding_rank {
-  position: relative; 
+  position: relative;
+  top:20px; 
   left: 800px;
-
-  color: #AAA; 
 }
 
 #funding_rank span {
-  color: #555; 
+  color: #0072C6;
+  font-weight: 400;
+}
+
+a{
+  color: #0072C6;
 }
 
 a.btn{

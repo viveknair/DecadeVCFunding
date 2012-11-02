@@ -15,7 +15,7 @@ var width = 600,
     minYear = 2002,
     vizMarginLeft = 150,
     vizMarginTop = 20,
-    sidebarMarginLeft = width + 225,
+    sidebarMarginLeft = width + 200,
     sidebarMarginTop = 40;
 var json_object;
 
@@ -339,6 +339,7 @@ vis.selectAll("path.industries")
           .style("stroke", '#dddddd')
           .style("stroke-width", 1);
           setToGlobal();
+          $('#funding_rank span').html('2002 - 2012')
         });
     var queryLines = groupYearQuery.append("svg:line")
       .attr({
