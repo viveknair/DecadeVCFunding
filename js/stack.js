@@ -250,7 +250,7 @@ vis.selectAll("line")
     .attr("x2", width) 
     .attr("y1", y_scale)
     .attr("y2", y_scale)
-    .style("stroke", "#ccc");
+    .style("stroke", "#dddddd");
 
 vis.selectAll("path.industries")
     .data(data)
