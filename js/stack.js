@@ -85,7 +85,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].funding_rounds = json[i].value.number_funding_rounds; 
     }
   }
-  data = d3.layout.stack()(new_data);
+  data = d3.layout.stack().order('inside-out')(new_data);
   for(var i = 0; i < data.length; i++){
     data[i].category = categories[i];
   }
@@ -126,13 +126,13 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('height', 600)
   .attr('transform', 'translate('+ [sidebarMarginLeft, sidebarMarginTop] + ')')
 
-console.log(categories);
 legend_groups = vis_sidebar.selectAll('g.industry_group')
   .data(new_categories)
  .enter().append('svg:g')
   .attr('class', function(d,i) {
     return 'industry-' + d.category_code ;
   })  
+
 var legend_duration = 400;
 
 legend_groups 

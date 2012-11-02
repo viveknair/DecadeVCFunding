@@ -298,9 +298,15 @@ body{
   font-family: 'Helvetica';
 }
 
-h1,h2,h3,h4,h5,h6,div,p{
+h1,h2,h3,h4,h5,h6,div{
   font-weight:300;
   margin-bottom:0;
+}
+
+.description{
+  font-weight:300;
+  width:75%;
+  margin-left: 40px;
 }
 
 text {
@@ -335,6 +341,17 @@ path, circle{
 
 a{
   color: #0072C6;
+  text-decoration: none;
+}
+
+a:visited{
+  color: #0072C6;
+}
+
+a:hover{
+  color: #0072C6;
+  cursor:pointer;
+  text-decoration: underline;
 }
 
 a.btn{
