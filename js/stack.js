@@ -11,7 +11,7 @@ var max, min = 0;
 var width = 600,
     height = 400,
     containerWidth = 1200,
-    containerHeight = 450,
+    containerHeight = 475,
     minYear = 2002,
     vizMarginLeft = 150,
     vizMarginTop = 20,
@@ -133,6 +133,7 @@ legend_groups = vis_sidebar.selectAll('g.industry_group')
   .attr('class', function(d,i) {
     return 'industry-' + d.category_code ;
   })  
+var legend_duration = 300;
 
 legend_groups 
     .attr('transform', function(d,i) {
@@ -147,14 +148,14 @@ legend_groups
         if (circle.attr('class') == 'industry-' + d.category_code) {
           circle
             .transition()
-            .duration(200)
+            .duration(legend_duration)
             .style('opacity', 1.0)
             .style('stroke-width', 1)
             .style('stroke', 'grey')
         } else {
           circle
             .transition()
-            .duration(200)
+            .duration(legend_duration)
             .style('opacity', 0.1)
             .style('stroke', 'none')
         } 
@@ -166,12 +167,12 @@ legend_groups
         if (circle.attr('class') == 'industry-' + d.category_code) {
           circle
             .transition()
-            .duration(200)
+            .duration(legend_duration)
             .style('opacity', .9);
         } else {
           circle
             .transition()
-            .duration(200)
+            .duration(legend_duration)
             .style('opacity', 0.2);
         } 
       })
@@ -182,12 +183,12 @@ legend_groups
         if (circle.attr('class') == 'industry-' + d.category_code + ' text-element-industry') {
           circle
             .transition()
-            .duration(200)
+            .duration(legend_duration)
             .style('opacity', 1.0);
         } else {
           circle
             .transition()
-            .duration(200)
+            .duration(legend_duration)
             .style('opacity', 0.2);
         } 
       })
@@ -280,7 +281,7 @@ var x_axis_label = vis.append('svg:g')
 x_axis_label
   .append('svg:text')
   .text('Year of Funding')
-  .attr('transform', 'translate(' + [width / 2 - 50, containerHeight - 60] + ')');
+  .attr('transform', 'translate(' + [width / 2 - 50, containerHeight - 30] + ')');
 
 
 vis.selectAll("path.industries")
