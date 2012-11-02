@@ -7,7 +7,7 @@ var categories = new Object();
 var max, min = 0;
 var width = 800,
     height = 400,
-    minYear = 1997;
+    minYear = 2002;
 
 d3.json("data/json/crunchbase_data.json", function(json) {
   var new_data = new Array();
@@ -60,7 +60,7 @@ var area = d3.svg.area()
 
 var vis_wrapper = d3.select("#chart")
   .append("svg")
-  .attr('width', 1200)
+  .attr('width', 1400)
   .attr('height', 1200);
 
 var vis_sidebar = vis_wrapper.append('svg:g')
@@ -76,7 +76,16 @@ vis_sidebar.selectAll('circle.industry_circle')
     return 'industry-' + d;
   }) .attr('r', 20)
   .attr('transform', function(d,i) {
-    var x = (i >= 8) ? 200 : 0; 
+    var x;
+    console.log('data index is ' + i );
+    if ( i < 16 && i >= 8  ) {
+      x = 200;   
+    } else if ( i >= 16 ) {
+      x = 400;   
+      console.log('We got a 400');
+    } else {
+      x = 0;
+    }
     return 'translate(' + x + ',' + (50 * (i % 8))  +')'; 
   })
   .style('fill', function(d,i) {
@@ -108,7 +117,17 @@ vis_sidebar.selectAll('text.industry_text')
     return String(d);
   })
   .attr('transform', function(d,i) {
-    var x = (i >= 8) ? 200 : 0; 
+    var x;
+    console.log('data index is ' + i );
+    if ( i < 16 && i >= 8  ) {
+      x = 200;   
+    } else if ( i >= 16 ) {
+      x = 400;   
+      console.log('We got a 400');
+    } else {
+      x = 0;
+    }
+
     return 'translate(' + (x + 40) + ',' + (50 * (i % 8))  +')'; 
   })
   .style('fill', '#555')
