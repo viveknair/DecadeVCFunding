@@ -17,6 +17,7 @@ var width = 600,
     vizMarginTop = 20,
     sidebarMarginLeft = width + 225,
     sidebarMarginTop = 40;
+var json_object;
 
 var categoryMapping = {
   'advertising' : 'Advertising',
@@ -43,6 +44,7 @@ var omittedCategories = ['legal', 'consulting']
 
 
 d3.json("data/json/crunchbase_data.json", function(json) {
+  json_object = json;
   var new_data = new Array();
   max = d3.max(json, function(d){ return d._id.funded_year});
   min = d3.min(json, function(d){ return d._id.funded_year});
@@ -320,8 +322,22 @@ vis.selectAll("path.industries")
           }
         })
         .style("opacity", .5)
-        .on("mouseover", function(d,i){ d3.select(this).select('line').style("stroke", 'orange').style("stroke-width", 2);})
-        .on("mouseout", function(d,i){ d3.select(this).select('line').style("stroke", '#dddddd').style("stroke-width", 1);});
+        .on("mouseover", function(d,i){ 
+          d3.select(this).select('line')
+          .style("stroke", 'orange')
+          .style("stroke-width", 2);
+          retotalNewCategories(i+ minYear, json_object);
+          new_categories.sort(category_sort);
+          redrawLegend();
+          console.log("redraw");
+        })
+        .on("mouseout", function(d,i){ 
+          d3.select(this).select('line')
+          .style("stroke", '#dddddd')
+          .style("stroke-width", 1);
+          setToGlobal();
+          redrawLegend();
+        });
     var queryLines = groupYearQuery.append("svg:line")
       .attr({
         x1: width/mx/2,
@@ -343,6 +359,9 @@ vis.selectAll("path.industries")
       }
     }
     redrawLegend();
+
+    retotalNewCategories(2011, json);
+    console.log(new_categories);
 });
 
 var durationTime = 500;
@@ -351,27 +370,35 @@ var category_sort = function(a,b){
   return b.total_amount - a.total_amount;
 }
 
-function retotalNewCategories(year) {
+function retotalNewCategories(year, json) {
+  for (var key in categories) {
+    categories[key].total_amount = 0;
+  }
+
+  new_categories.forEach( function(category) {
+    category.total_amount = 0;
+  })
+
   for( var i = 0 ; i < json.length; i ++) {
-    for (var key in categories) {
-      categories[key].total_amount = 0;
+    if ( json[i]._id.funded_year == year && omittedCategories.indexOf(json[i]._id.category_code) === -1) {
+      console.log(json[i].value.total_amount);
+      categories[json[i]._id.category_code].total_amount += json[i].value.total_amount;
     }
-    new_categories.forEach( function(category) {
-      category.total_amount = 0;
-    })
-  
-    if ( json[i]._id.funding_year == year ) {
-      categories[json[id]._id.category_code] += json[id].value.total_amount;
-    }
+  }
 
-    for (var key in categories) {
-      for ( var i = 0; i < new_categories.length; i ++ ) {
-        if ( new_categories[i].category_code === key ) {
-          new_categories[i].total_amount = categories[key].total_amount
-        } 
-      }
+  for (var key in categories) {
+    for ( var i = 0; i < new_categories.length; i ++ ) {
+      if ( new_categories[i].category_code === key ) {
+        new_categories[i].total_amount = categories[key].total_amount
+      } 
     }
+  }
+}
 
+function setToGlobal(){
+  for(var i = 0; i < new_categories.length; i++){
+    new_categories[i].total_amount = global_categories[i].total_amount;
+    new_categories[i].category_code = global_categories[i].category_code;
   }
 }
 
