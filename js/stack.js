@@ -3,6 +3,7 @@ var n = 0, // number of layers
 
 var data = null,
     color = d3.scale.category20c();
+   
 var categories = new Object();
 var max, min = 0;
 var width = 600,
@@ -51,6 +52,14 @@ d3.json("data/json/crunchbase_data.json", function(json) {
     }
   };
   key_categories = d3.keys(categories);
+
+  color_options = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#17becf', '#9edae5']
+  color_options = color_options.reverse() 
+
+  var custom_color = d3.scale.ordinal()
+    .domain(key_categories)
+    .range(color_options)  
+
   n = key_categories.length;
   for(var i = 0; i < n; i++){
     new_data[i] = new Array(m);
@@ -137,12 +146,15 @@ legend_groups
           circle
             .transition()
             .duration(200)
-            .style('opacity', .9);
+            .style('opacity', 1.0)
+            .style('stroke-width', 1)
+            .style('stroke', 'grey')
         } else {
           circle
             .transition()
             .duration(200)
-            .style('opacity', 0.2);
+            .style('opacity', 0.1)
+            .style('stroke', 'none')
         } 
       })
 
@@ -187,7 +199,8 @@ legend_groups
         circle
           .transition()
           .duration(200)
-          .style('opacity', .9);
+          .style('opacity', 1.0)
+          .style('stroke', 'none')
       })
 
     d3.selectAll('circle')
@@ -217,7 +230,7 @@ var circle_legend = legend_groups
   })
   .attr('r', 7)
   .style('fill', function(d,i) {
-    return color(d.category_code);
+    return custom_color(d.category_code);
   })
 
 var text_legend = legend_groups
@@ -275,7 +288,7 @@ vis.selectAll("path.industries")
       return 'industry-' + d[m-1].category_code;
     })
     .style("fill", function(d, i) { 
-      return color(d[m-1].category_code); 
+      return custom_color(d[m-1].category_code); 
     })
 
     .transition()
@@ -330,7 +343,7 @@ var durationTime = 500;
 var category_sort = function(a,b){
   return b.total_amount - a.total_amount;
 }
-
+t
 function redrawLegend(){
   legend_groups.data(new_categories, function(d){ return d.category_code })
     .transition()
