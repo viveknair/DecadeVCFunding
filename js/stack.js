@@ -2,7 +2,7 @@ var n = 0, // number of layers
     m = 20; // number of samples per layer
 
 var data = null,
-    color = d3.scale.category20();
+    color = d3.scale.category20c();
 var categories = new Object();
 var max, min = 0;
 var width = 800,
@@ -80,10 +80,14 @@ d3.json("data/json/crunchbase_data.json", function(json) {
       new_categories.push(categories[key]) 
     }
   }
-  
-  console.log(new_categories)
 
-
+  var color_domain = [];
+  new_categories.forEach(function(category) {
+    color_domain.push(category.category_code);
+  }) 
+  var custom_color = d3.scale.ordinal()
+    .domain(color_domain)
+    .range(colorbrewer.Spectral[11]);
 
 var mx = m - 1,
     my = d3.max(data, function(d) {
@@ -215,7 +219,7 @@ var circle_legend = legend_groups
   })
   .attr('r', 7)
   .style('fill', function(d,i) {
-    return color(i);
+    return color(d.category_code);
   })
 
 var text_legend = legend_groups
@@ -242,7 +246,7 @@ vis.selectAll("path.industries")
       return 'industry-' + d[m-1].category_code;
     })
     .style("fill", function(d, i) { 
-      return color(i); 
+      return color(d[m-1].category_code); 
     })
 
     .transition()
@@ -251,6 +255,7 @@ vis.selectAll("path.industries")
 
     var y_scale = d3.scale.linear().domain([0, my]).range([height,0]);      
     var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
+
     vis.append("g")
       .attr("transform", "translate(" + [10, 0] + ")")
       .call(y_axis);
