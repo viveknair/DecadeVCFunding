@@ -96,21 +96,15 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('height', 600)
   .attr('transform', 'translate('+ sidebarMarginLeft + ', 30)')
 
-vis_sidebar.selectAll('circle.industry_circle')
+var legend_groups = vis_sidebar.selectAll('g.industry_group')
   .data(key_categories)
- .enter().append('circle')
+ .enter().append('svg:g')
   .attr('class', function(d,i) {
-    return 'industry-' + d;
-  }) .attr('r', 7)
-  .attr('transform', function(d,i) {
-    var x = 0;
-    console.log('data index is ' + i );
-    return 'translate(' + x + ',' + (20 * i)  +')'; 
-  })
-  .style('fill', function(d,i) {
-    return color(i);
-  })
-  .on('mouseover', function(d, i) {
+    return 'industry-' + d ;
+  })  
+
+legend_groups 
+   .on('mouseover', function(d, i) {
     d3.selectAll('path')
       .each(function() {
         var circle = d3.select(this);
@@ -193,9 +187,22 @@ vis_sidebar.selectAll('circle.industry_circle')
   })
 
 
-vis_sidebar.selectAll('text.industry_text')
-  .data(key_categories)
- .enter().append('svg:text')
+var circle_legend = legend_groups
+  .append('circle')
+  .attr('class', function(d,i) {
+    return 'industry-' + d;
+  }) .attr('r', 7)
+  .attr('transform', function(d,i) {
+    var x = 0;
+    console.log('data index is ' + i );
+    return 'translate(' + x + ',' + (20 * i)  +')'; 
+  })
+  .style('fill', function(d,i) {
+    return color(i);
+  })
+
+var text_legend = legend_groups
+  .append('svg:text')
   .attr('class', function(d,i) {
      return 'industry-' + d + ' text-element-industry';
   })
@@ -247,24 +254,3 @@ vis.selectAll("path.industries")
       .text(function(d, i) { return i + minYear; });
 
 });
-
-
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-function generateData(n,m){
-  var test_data = [];
-  for(var i = 0; i < n; i++){
-    var arr = new Array();
-    for(var j = 0; j < m * 2; j++){
-      var current = .2 + Math.random();
-      arr.push({x:j, y:current});
-      j += 1
-      arr.push({x:j+.4, y:current});
-    }
-    test_data.push(arr);
-  } 
-  return test_data;
-}
-
