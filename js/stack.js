@@ -5,6 +5,7 @@ var data = null,
     color = d3.scale.category20c();
    
 var categories = new Object();
+var new_categories = [];
 var max, min = 0;
 var width = 600,
     height = 400,
@@ -85,8 +86,6 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   for(var i = 0; i < data.length; i++){
     data[i].category = categories[i];
   }
-
-  new_categories = []
   
   for (var key in categories) {
     if (categories.hasOwnProperty(key)) {
@@ -305,7 +304,7 @@ vis.selectAll("path.industries")
     .enter().append("text")
       .attr("class", "label")
       .attr("x", function(d) { return d.x * width / mx - width/m/2; })
-      .attr("y", height + 6)
+      .attr("y", height + 10)
       .attr("dx", x({x: .45}))
       .attr("dy", ".71em")
       .attr("text-anchor", "middle")
@@ -320,7 +319,7 @@ vis.selectAll("path.industries")
           }
         })
         .style("opacity", .5)
-        .on("mouseover", function(d,i){ d3.select(this).select('line').style("stroke", 'blue').style("stroke-width", 2);})
+        .on("mouseover", function(d,i){ d3.select(this).select('line').style("stroke", 'orange').style("stroke-width", 2);})
         .on("mouseout", function(d,i){ d3.select(this).select('line').style("stroke", '#dddddd').style("stroke-width", 1);});
     var queryLines = groupYearQuery.append("svg:line")
       .attr({
@@ -335,6 +334,8 @@ vis.selectAll("path.industries")
           width: width/mx,
           height: height,
       }).style("opacity", 0);
+    new_categories.sort(category_sort);
+    redrawLegend();
 });
 
 var durationTime = 500;
@@ -369,7 +370,7 @@ function retotalNewCategories(year) {
   }
 }
 
-console.log( new_categories );
+console.log(new_categories);
 
 function redrawLegend(){
   legend_groups.data(new_categories, function(d){ return d.category_code })
