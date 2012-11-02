@@ -56,10 +56,12 @@ d3.json("data/json/crunchbase_data.json", function(json) {
     }
   }
 
+
   // n = categories
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.funded_year >= minYear && (key_categories.indexOf(json[i]._id.category_code) !== -1)){
+      categories[json[i]._id.category_code].total_amount += json[i].value.total_amount;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].y += json[i].value.total_amount;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category = json[i]._id.category_code;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category_code = json[i]._id.category_code;
@@ -70,6 +72,18 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   for(var i = 0; i < data.length; i++){
     data[i].category = categories[i];
   }
+
+  new_categories = []
+  
+  for (var key in categories) {
+    if (categories.hasOwnProperty(key)) {
+      new_categories.push(categories[key]) 
+    }
+  }
+  
+  console.log(new_categories)
+
+
 
 var mx = m - 1,
     my = d3.max(data, function(d) {
@@ -98,11 +112,12 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('height', 600)
   .attr('transform', 'translate('+ sidebarMarginLeft + ', 30)')
 
+console.log(categories);
 var legend_groups = vis_sidebar.selectAll('g.industry_group')
-  .data(key_categories)
+  .data(new_categories)
  .enter().append('svg:g')
   .attr('class', function(d,i) {
-    return 'industry-' + d ;
+    return 'industry-' + d.category_code ;
   })  
 
 legend_groups 
@@ -115,7 +130,7 @@ legend_groups
     d3.selectAll('path')
       .each(function() {
         var circle = d3.select(this);
-        if (circle.attr('class') == 'industry-' + d) {
+        if (circle.attr('class') == 'industry-' + d.category_code) {
           circle
             .transition()
             .duration(200)
@@ -131,7 +146,7 @@ legend_groups
     d3.selectAll('circle')
       .each(function() {
         var circle = d3.select(this);
-        if (circle.attr('class') == 'industry-' + d) {
+        if (circle.attr('class') == 'industry-' + d.category_code) {
           circle
             .transition()
             .duration(200)
@@ -147,7 +162,7 @@ legend_groups
     d3.selectAll('text.text-element-industry')
       .each(function() {
         var circle = d3.select(this);
-        if (circle.attr('class') == 'industry-' + d + ' text-element-industry') {
+        if (circle.attr('class') == 'industry-' + d.category_code + ' text-element-industry') {
           circle
             .transition()
             .duration(200)
@@ -196,7 +211,7 @@ legend_groups
 var circle_legend = legend_groups
   .append('circle')
   .attr('class', function(d,i) {
-    return 'industry-' + d;
+    return 'industry-' + d.category_code;
   })
   .attr('r', 7)
   .style('fill', function(d,i) {
@@ -206,10 +221,10 @@ var circle_legend = legend_groups
 var text_legend = legend_groups
   .append('svg:text')
   .attr('class', function(d,i) {
-     return 'industry-' + d + ' text-element-industry';
+     return 'industry-' + d.category_code + ' text-element-industry';
   })
   .text(function(d,i) {
-    return String(categoryMapping[d]);
+    return String(categoryMapping[d.category_code]);
   })
   .attr('transform', 'translate(' + [15, 5] +')')
   .style('fill', '#555')
