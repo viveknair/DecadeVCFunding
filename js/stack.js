@@ -102,7 +102,7 @@ vis_sidebar.selectAll('text.industry_text')
   .data(key_categories)
  .enter().append('svg:text')
   .attr('class', function(d,i) {
-     return 'industry-' + d;
+     return 'industry-' + d + ' text-element-industry';
   })
   .text(function(d,i) {
     return String(d);
@@ -146,10 +146,10 @@ vis.selectAll("path.industries")
           } 
         })
 
-      d3.selectAll('text')
+      d3.selectAll('text.text-element-industry')
         .each(function() {
           var circle = d3.select(this);
-          if (circle.attr('class') == 'industry-' + d[m-1].category_code) {
+          if (circle.attr('class') == 'industry-' + d[m-1].category_code + ' text-element-industry') {
             circle
               .transition()
               .duration(200)
@@ -182,8 +182,6 @@ vis.selectAll("path.industries")
             .duration(200)
             .style('opacity', 1.0);
         })
-
-      
     })
 
     .transition()
@@ -207,7 +205,6 @@ vis.selectAll("path.industries")
       .attr("dy", ".71em")
       .attr("text-anchor", "middle")
       .text(function(d, i) { return i + minYear; });
-
 
 });
 
