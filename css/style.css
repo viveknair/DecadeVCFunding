@@ -295,6 +295,12 @@ td { vertical-align: top; }
 body{
   color:#777;
   padding-left:2%;
+  font-family: 'Helvetica';
+}
+
+text {
+  font-size: 13px; 
+  font-family: 'Helvetica';
 }
 
 #chart{
