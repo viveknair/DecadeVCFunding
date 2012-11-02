@@ -20,7 +20,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   m = max - minYear + 1;
   for(var i = 0; i < json.length; i++){
     if(json[i]._id.category_code && json[i]._id.category_code !== 'legal'){
-      categories[json[i]._id.category_code] = { total_amount: 0 };
+      categories[json[i]._id.category_code] = { category_code : json[i]._id.category_code, total_amount: 0 };
     }
   };
   key_categories = d3.keys(categories);
@@ -161,7 +161,6 @@ legend_groups
           .duration(200)
           .style('opacity', 1.0);
       })
-
 
   })
 
