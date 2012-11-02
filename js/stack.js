@@ -6,14 +6,14 @@ var data = null,
    
 var categories = new Object();
 var max, min = 0;
-var width = 800,
+var width = 600,
     height = 400,
     containerWidth = 1400,
     containerHeight = 500,
     minYear = 2002,
     vizMarginLeft = 180,
     vizMarginTop = 20,
-    sidebarMarginLeft = 1045,
+    sidebarMarginLeft = width + 225,
     sidebarMarginTop = 40;
 
 var categoryMapping = {
@@ -258,7 +258,7 @@ grid_lines
     .data(y_scale.ticks(10))
     .enter().append("line")
     .attr("class", "cols")
-    .attr("x1", 5)
+    .attr("x1", 0)
     .attr("x2", width) 
     .attr("y1", y_scale)
     .attr("y2", y_scale)
@@ -278,7 +278,7 @@ var x_axis_label = vis.append('svg:g')
 x_axis_label
   .append('svg:text')
   .text('Year of Funding')
-  .attr('transform', 'translate(' + [containerWidth / 4, containerHeight - 60] + ')');
+  .attr('transform', 'translate(' + [width / 2 - 50, containerHeight - 60] + ')');
 
 
 vis.selectAll("path.industries")
@@ -299,19 +299,42 @@ vis.selectAll("path.industries")
     vis.append("g")
       .attr("transform", "translate(" + [0, 0] + ")")
       .call(y_axis);
-
-    var x = function(d) { return d.x * width / m; }
+    var x = function(d) { return d.x * width / mx; }
     var labels = vis.selectAll("text.label")
       .data(data[0])
     .enter().append("text")
       .attr("class", "label")
-      .attr("x", x)
+      .attr("x", function(d) { return d.x * width / mx - width/m/2; })
       .attr("y", height + 6)
       .attr("dx", x({x: .45}))
       .attr("dy", ".71em")
       .attr("text-anchor", "middle")
       .text(function(d, i) { return i + minYear; });
-
+    var groupYearQuery = vis.selectAll("g.yearQuery")
+      .data(data[0])
+      .enter().append("svg:g")
+        .attr("class", "yearQuery")
+        .attr({
+          transform: function(d,i){ 
+            return 'translate(' + [(d.x * width / mx) - width / mx/ 2, 0 ] + ')';
+          }
+        })
+        .style("opacity", .5)
+        .on("mouseover", function(d,i){ d3.select(this).select('line').style("stroke", 'blue').style("stroke-width", 2);})
+        .on("mouseout", function(d,i){ d3.select(this).select('line').style("stroke", '#dddddd').style("stroke-width", 1);});
+    var queryLines = groupYearQuery.append("svg:line")
+      .attr({
+        x1: width/mx/2,
+        x2: width/mx/2,
+        y1: 0,
+        y2: height
+      })
+      .style("stroke", "#eeeeee");
+    var queryRects = groupYearQuery.append("svg:rect")
+      .attr({
+          width: width/mx,
+          height: height,
+      }).style("opacity", 0);
 });
 
 var durationTime = 500;
