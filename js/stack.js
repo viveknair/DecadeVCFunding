@@ -82,20 +82,8 @@ var legend_groups = vis_sidebar.selectAll('g.industry_group')
     return 'industry-' + d ;
   })  
 
-var circle_legend = legend_groups
-  .append('circle')
-  .attr('class', function(d,i) {
-    return 'industry-' + d;
-  }) .attr('r', 7)
-  .attr('transform', function(d,i) {
-    var x = 0;
-    console.log('data index is ' + i );
-    return 'translate(' + x + ',' + (20 * i)  +')'; 
-  })
-  .style('fill', function(d,i) {
-    return color(i);
-  })
-  .on('mouseover', function(d, i) {
+legend_groups 
+   .on('mouseover', function(d, i) {
     d3.selectAll('path')
       .each(function() {
         var circle = d3.select(this);
@@ -175,6 +163,21 @@ var circle_legend = legend_groups
       })
 
 
+  })
+
+
+var circle_legend = legend_groups
+  .append('circle')
+  .attr('class', function(d,i) {
+    return 'industry-' + d;
+  }) .attr('r', 7)
+  .attr('transform', function(d,i) {
+    var x = 0;
+    console.log('data index is ' + i );
+    return 'translate(' + x + ',' + (20 * i)  +')'; 
+  })
+  .style('fill', function(d,i) {
+    return color(i);
   })
 
 var text_legend = legend_groups
