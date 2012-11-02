@@ -335,8 +335,6 @@ vis.selectAll("path.industries")
           d3.select(this).select('line')
           .style("stroke", '#dddddd')
           .style("stroke-width", 1);
-          setToGlobal();
-          redrawLegend();
         });
     var queryLines = groupYearQuery.append("svg:line")
       .attr({
