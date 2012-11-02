@@ -296,7 +296,6 @@ body{
   color:#777;
   padding-left:2%;
   font-family: 'Helvetica';
-  background-color: #efefef;
 }
 
 h1,h2,h3,h4,h5,h6{
@@ -304,6 +303,7 @@ h1,h2,h3,h4,h5,h6{
 }
 
 text {
+  fill: #777;
   font-weight:300;
   font-size: 14px; 
   font-family: 'Helvetica';
