@@ -283,7 +283,6 @@ x_axis_label
   .text('Year of Funding')
   .attr('transform', 'translate(' + [width / 2 - 50, containerHeight - 30] + ')');
 
-
 vis.selectAll("path.industries")
     .data(data)
   .enter().append("path")
@@ -417,7 +416,3 @@ function redrawLegend(){
       return 'translate(' + x + ',' + (23.5 * i)  +')'; 
     })
 }
-
-$('#set_global').click( function() {
-  // Set global and redraw and shit like that    
-})
