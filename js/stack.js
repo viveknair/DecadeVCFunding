@@ -336,6 +336,9 @@ vis.selectAll("path.industries")
       }).style("opacity", 0);
     new_categories.sort(category_sort);
     redrawLegend();
+
+    retotalNewCategories(2011, json);
+    console.log(new_categories);
 });
 
 var durationTime = 500;
@@ -344,7 +347,7 @@ var category_sort = function(a,b){
   return b.total_amount - a.total_amount;
 }
 
-function retotalNewCategories(year) {
+function retotalNewCategories(year, json) {
   for (var key in categories) {
     categories[key].total_amount = 0;
   }
@@ -354,21 +357,21 @@ function retotalNewCategories(year) {
   })
 
   for( var i = 0 ; i < json.length; i ++) {
-  
-    if ( json[i]._id.funding_year == year ) {
-      categories[json[id]._id.category_code] += json[id].value.total_amount;
+    if ( json[i]._id.funded_year == year && omittedCategories.indexOf(json[i]._id.category_code) === -1) {
+      console.log(json[i].value.total_amount);
+      categories[json[i]._id.category_code].total_amount += json[i].value.total_amount;
     }
+  }
 
-    for (var key in categories) {
-      for ( var i = 0; i < new_categories.length; i ++ ) {
-        if ( new_categories[i].category_code === key ) {
-          new_categories[i].total_amount = categories[key].total_amount
-        } 
-      }
+  for (var key in categories) {
+    for ( var i = 0; i < new_categories.length; i ++ ) {
+      if ( new_categories[i].category_code === key ) {
+        new_categories[i].total_amount = categories[key].total_amount
+      } 
     }
-
   }
 }
+
 
 console.log(new_categories);
 
