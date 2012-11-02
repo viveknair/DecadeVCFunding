@@ -6,7 +6,7 @@ var data = null,
 var categories = new Object();
 var max, min = 0;
 var width = 800,
-    height = 400,
+    height = 600,
     minYear = 2002;
 
 d3.json("data/json/crunchbase_data.json", function(json) {
