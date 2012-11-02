@@ -5,6 +5,7 @@ var data = null,
     color = d3.scale.category20c();
    
 var categories = new Object();
+var new_categories = [];
 var max, min = 0;
 var width = 600,
     height = 400,
@@ -85,8 +86,6 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   for(var i = 0; i < data.length; i++){
     data[i].category = categories[i];
   }
-
-  new_categories = []
   
   for (var key in categories) {
     if (categories.hasOwnProperty(key)) {
@@ -335,6 +334,8 @@ vis.selectAll("path.industries")
           width: width/mx,
           height: height,
       }).style("opacity", 0);
+    new_categories.sort(category_sort);
+    redrawLegend();
 });
 
 var durationTime = 500;
@@ -366,6 +367,8 @@ function retotalNewCategories(year) {
 
   }
 }
+
+console.log(new_categories);
 
 function redrawLegend(){
   legend_groups.data(new_categories, function(d){ return d.category_code })
