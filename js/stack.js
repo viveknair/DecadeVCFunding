@@ -125,7 +125,7 @@ var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('transform', 'translate('+ [sidebarMarginLeft, sidebarMarginTop] + ')')
 
 console.log(categories);
-var legend_groups = vis_sidebar.selectAll('g.industry_group')
+legend_groups = vis_sidebar.selectAll('g.industry_group')
   .data(new_categories)
  .enter().append('svg:g')
   .attr('class', function(d,i) {
@@ -165,12 +165,12 @@ legend_groups
           circle
             .transition()
             .duration(200)
-            .style('opacity', 1.0);
+            .style('opacity', .9);
         } else {
           circle
             .transition()
             .duration(200)
-            .style('opacity', 0.1);
+            .style('opacity', 0.2);
         } 
       })
 
@@ -186,7 +186,7 @@ legend_groups
           circle
             .transition()
             .duration(200)
-            .style('opacity', 0.1);
+            .style('opacity', 0.2);
         } 
       })
 
@@ -209,7 +209,7 @@ legend_groups
         circle
           .transition()
           .duration(200)
-          .style('opacity', 1.0);
+          .style('opacity', .9);
       })
 
     d3.selectAll('text')
@@ -313,3 +313,20 @@ vis.selectAll("path.industries")
       .text(function(d, i) { return i + minYear; });
 
 });
+
+var durationTime = 500;
+
+var category_sort = function(a,b){
+  return b.total_amount - a.total_amount;
+}
+t
+function redrawLegend(){
+  legend_groups.data(new_categories, function(d){ return d.category_code })
+    .transition()
+    .duration(function(d,i){ return 400 + i * 75})
+    .attr('transform', function(d,i) {
+      console.log("translateing with this index: " + i );
+      var x = 0;
+      return 'translate(' + x + ',' + (23.5 * i)  +')'; 
+    })
+}
