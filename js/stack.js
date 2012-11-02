@@ -244,7 +244,7 @@ var text_legend = legend_groups
   .text(function(d,i) {
     return String(categoryMapping[d.category_code]);
   })
-  .attr('transform', 'translate(' + [15, 4] +')')
+  .attr('transform', 'translate(' + [15, 5] +')')
   .style('fill', '#555')
 
 var vis = vis_wrapper.append('svg:g')
