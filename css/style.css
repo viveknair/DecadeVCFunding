@@ -298,8 +298,13 @@ body{
   font-family: 'Helvetica';
 }
 
+h1,h2,h3,h4,h5,h6{
+  font-weight:300;
+}
+
 text {
-  font-size: 13px; 
+  font-weight:300;
+  font-size: 14px; 
   font-family: 'Helvetica';
 }
 
