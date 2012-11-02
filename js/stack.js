@@ -210,7 +210,6 @@ legend_groups
 
   })
 
-
 var circle_legend = legend_groups
   .append('circle')
   .attr('class', function(d,i) {
