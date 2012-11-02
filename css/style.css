@@ -296,6 +296,7 @@ body{
   color:#777;
   padding-left:2%;
   font-family: 'Helvetica';
+  background-color: #efefef;
 }
 
 h1,h2,h3,h4,h5,h6{
@@ -314,6 +315,10 @@ text {
 
 .domain{
   display:none;
+}
+
+path, circle{
+  opacity: .9;
 }
 
 a.btn{

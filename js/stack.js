@@ -141,12 +141,12 @@ legend_groups
           circle
             .transition()
             .duration(200)
-            .style('opacity', 1.0);
+            .style('opacity', .9);
         } else {
           circle
             .transition()
             .duration(200)
-            .style('opacity', 0.1);
+            .style('opacity', 0.2);
         } 
       })
 
@@ -157,12 +157,12 @@ legend_groups
           circle
             .transition()
             .duration(200)
-            .style('opacity', 1.0);
+            .style('opacity', .9);
         } else {
           circle
             .transition()
             .duration(200)
-            .style('opacity', 0.1);
+            .style('opacity', 0.2);
         } 
       })
 
@@ -178,7 +178,7 @@ legend_groups
           circle
             .transition()
             .duration(200)
-            .style('opacity', 0.1);
+            .style('opacity', 0.2);
         } 
       })
 
@@ -191,7 +191,7 @@ legend_groups
         circle
           .transition()
           .duration(200)
-          .style('opacity', 1.0);
+          .style('opacity', .9);
       })
 
     d3.selectAll('circle')
@@ -200,7 +200,7 @@ legend_groups
         circle
           .transition()
           .duration(200)
-          .style('opacity', 1.0);
+          .style('opacity', .9);
       })
 
     d3.selectAll('text')
