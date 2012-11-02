@@ -330,6 +330,8 @@ vis.selectAll("path.industries")
           new_categories.sort(category_sort);
           redrawLegend();
           console.log("redraw");
+
+          $('#funding_rank span').html('' + (i + minYear))
         })
         .on("mouseout", function(d,i){ 
           d3.select(this).select('line')
@@ -413,3 +415,7 @@ function redrawLegend(){
       return 'translate(' + x + ',' + (23.5 * i)  +')'; 
     })
 }
+
+$('#set_global').click( function() {
+  // Set global and redraw and shit like that    
+})
