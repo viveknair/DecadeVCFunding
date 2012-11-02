@@ -133,7 +133,7 @@ legend_groups = vis_sidebar.selectAll('g.industry_group')
   .attr('class', function(d,i) {
     return 'industry-' + d.category_code ;
   })  
-var legend_duration = 300;
+var legend_duration = 400;
 
 legend_groups 
     .attr('transform', function(d,i) {
