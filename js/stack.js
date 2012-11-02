@@ -11,6 +11,27 @@ var width = 800,
     vizMarginLeft = 120,
     sidebarMarginLeft = 1000;
 
+var categoryMapping = {
+  'advertising' : 'Advertising',
+  'biotech': 'BioTech',
+  'cleantech': 'CleanTech',
+  'consulting': 'Consulting',
+  'ecommerce': 'eCommerce',
+  'education': 'Education',
+  'enterprise': 'Enterprise',
+  'games_video': 'Games, Video and Entertainment',
+  'hardware': 'Hardware',
+  'mobile': 'Mobile/Wireless',
+  'network_hosting': 'Network/Hosting',
+  'other': 'Other',
+  'public_relations': 'Communications',
+  'search': 'Search',
+  'security': 'Security',
+  'semiconductor': 'Semiconductor',
+  'software': 'Software',
+  'web': 'Consumer Web'
+}
+
 
 d3.json("data/json/crunchbase_data.json", function(json) {
   var new_data = new Array();
