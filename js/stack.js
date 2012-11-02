@@ -306,7 +306,7 @@ vis.selectAll("path.industries")
     .enter().append("text")
       .attr("class", "label")
       .attr("x", function(d) { return d.x * width / mx - width/m/2; })
-      .attr("y", height + 6)
+      .attr("y", height + 10)
       .attr("dx", x({x: .45}))
       .attr("dy", ".71em")
       .attr("text-anchor", "middle")
@@ -321,7 +321,7 @@ vis.selectAll("path.industries")
           }
         })
         .style("opacity", .5)
-        .on("mouseover", function(d,i){ d3.select(this).select('line').style("stroke", 'blue').style("stroke-width", 2);})
+        .on("mouseover", function(d,i){ d3.select(this).select('line').style("stroke", 'orange').style("stroke-width", 2);})
         .on("mouseout", function(d,i){ d3.select(this).select('line').style("stroke", '#dddddd').style("stroke-width", 1);});
     var queryLines = groupYearQuery.append("svg:line")
       .attr({
@@ -343,7 +343,7 @@ var durationTime = 500;
 var category_sort = function(a,b){
   return b.total_amount - a.total_amount;
 }
-t
+
 function redrawLegend(){
   legend_groups.data(new_categories, function(d){ return d.category_code })
     .transition()
