@@ -32,6 +32,8 @@ var categoryMapping = {
   'web': 'Consumer Web'
 }
 
+var omittedCategories = ['legal', 'consulting']
+
 
 d3.json("data/json/crunchbase_data.json", function(json) {
   var new_data = new Array();
@@ -40,7 +42,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   //Set year range as m
   m = max - minYear + 1;
   for(var i = 0; i < json.length; i++){
-    if(json[i]._id.category_code && json[i]._id.category_code !== 'legal'){
+    if(json[i]._id.category_code &&  omittedCategories.indexOf(json[i]._id.category_code) === -1){
       categories[json[i]._id.category_code] = { total_amount: 0 };
     }
   };
@@ -207,7 +209,7 @@ var text_legend = legend_groups
      return 'industry-' + d + ' text-element-industry';
   })
   .text(function(d,i) {
-    return String(d);
+    return String(categoryMapping[d]);
   })
   .attr('transform', function(d,i) {
     var x = 0;
