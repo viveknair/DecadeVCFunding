@@ -61,13 +61,16 @@ var area = d3.svg.area()
 var vis_wrapper = d3.select("#chart")
   .append("svg")
   .attr('width', 1400)
-  .attr('height', 1200);
+  .attr('height', 1200)
+  .append("svg:g")
+  .attr('class', 'complete_visualization')
+  .attr('tranform', 'translate(' + [600, 0] + ')');
 
 var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('class', 'sidebar_visualization')
   .attr('width', 300)
   .attr('height', 600)
-  .attr('transform', 'translate(870, 30)')
+  .attr('transform', 'translate(1100, 30)')
 
 vis_sidebar.selectAll('circle.industry_circle')
   .data(key_categories)
@@ -184,7 +187,8 @@ vis_sidebar.selectAll('text.industry_text')
 var vis = vis_wrapper.append('svg:g')
   .attr('class', 'main_visualization')
   .attr("width", width)
-  .attr("height", height);
+  .attr("height", height)
+  .attr("transform", 'translate(' + [240, 0] + ')'); 
 
 vis.selectAll("path.industries")
     .data(data)
@@ -203,7 +207,7 @@ vis.selectAll("path.industries")
     var y_scale = d3.scale.linear().domain([0, my]).range([height,0]);      
     var y_axis = d3.svg.axis().scale(y_scale).orient("left").ticks(10);
     vis.append("g")
-      .attr("transform", "translate(" + [80, 0] + ")")
+      .attr("transform", "translate(" + [10, 0] + ")")
       .call(y_axis);
     
     var x = function(d) { return d.x * width / m; }
