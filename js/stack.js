@@ -7,7 +7,10 @@ var categories = new Object();
 var max, min = 0;
 var width = 800,
     height = 400,
-    minYear = 2002;
+    minYear = 2002,
+    vizMarginLeft = 120,
+    sidebarMarginLeft = 1000;
+
 
 d3.json("data/json/crunchbase_data.json", function(json) {
   var new_data = new Array();
@@ -16,7 +19,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   //Set year range as m
   m = max - minYear + 1;
   for(var i = 0; i < json.length; i++){
-    if(json[i]._id.category_code){
+    if(json[i]._id.category_code && json[i]._id.category_code !== 'legal'){
       categories[json[i]._id.category_code] = { total_amount: 0 };
     }
   };
@@ -33,7 +36,7 @@ d3.json("data/json/crunchbase_data.json", function(json) {
   // n = categories
   // m = year range starting at min
   for(var i = 0; i < json.length; i++){
-    if(json[i]._id.funded_year >= minYear){
+    if(json[i]._id.funded_year >= minYear && (key_categories.indexOf(json[i]._id.category_code) !== -1)){
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].y += json[i].value.total_amount;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category = json[i]._id.category_code;
       new_data[key_categories.indexOf(json[i]._id.category_code)][json[i]._id.funded_year - minYear].category_code = json[i]._id.category_code;
@@ -56,7 +59,7 @@ var area = d3.svg.area()
     .x(function(d) { return d.x * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; })
-    .interpolate(['basis']);
+    .interpolate(['linear']);
 
 var vis_wrapper = d3.select("#chart")
   .append("svg")
@@ -64,13 +67,13 @@ var vis_wrapper = d3.select("#chart")
   .attr('height', 1200)
   .append("svg:g")
   .attr('class', 'complete_visualization')
-  .attr('tranform', 'translate(' + [600, 0] + ')');
+  .attr('tranform', 'translate(' + [100, 0] + ')');
 
 var vis_sidebar = vis_wrapper.append('svg:g')
   .attr('class', 'sidebar_visualization')
   .attr('width', 300)
   .attr('height', 600)
-  .attr('transform', 'translate(1100, 30)')
+  .attr('transform', 'translate('+ sidebarMarginLeft + ', 30)')
 
 var legend_groups = vis_sidebar.selectAll('g.industry_group')
   .data(key_categories)
@@ -192,7 +195,7 @@ var vis = vis_wrapper.append('svg:g')
   .attr('class', 'main_visualization')
   .attr("width", width)
   .attr("height", height)
-  .attr("transform", 'translate(' + [240, 0] + ')'); 
+  .attr("transform", 'translate(' + [vizMarginLeft , 0] + ')'); 
 
 vis.selectAll("path.industries")
     .data(data)
