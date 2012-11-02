@@ -10,10 +10,10 @@ var global_categories =[];
 var max, min = 0;
 var width = 600,
     height = 400,
-    containerWidth = 1400,
-    containerHeight = 500,
+    containerWidth = 1200,
+    containerHeight = 450,
     minYear = 2002,
-    vizMarginLeft = 180,
+    vizMarginLeft = 150,
     vizMarginTop = 20,
     sidebarMarginLeft = width + 225,
     sidebarMarginTop = 40;
@@ -335,6 +335,7 @@ vis.selectAll("path.industries")
           d3.select(this).select('line')
           .style("stroke", '#dddddd')
           .style("stroke-width", 1);
+          setToGlobal();
         });
     var queryLines = groupYearQuery.append("svg:line")
       .attr({
@@ -394,10 +395,13 @@ function retotalNewCategories(year, json) {
 }
 
 function setToGlobal(){
-  for(var i = 0; i < new_categories.length; i++){
-    new_categories[i].total_amount = global_categories[i].total_amount;
-    new_categories[i].category_code = global_categories[i].category_code;
-  }
+  legend_groups.data(global_categories, function(d){ return d.category_code })
+    .transition()
+    .duration(function(d,i){ return 400 + i * 75})
+    .attr('transform', function(d,i) {
+      var x = 0;
+      return 'translate(' + x + ',' + (23.5 * i)  +')'; 
+    })
 }
 
 function redrawLegend(){
