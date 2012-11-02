@@ -1,11 +1,3 @@
-Make sure you have MongoDB installed
+The visualization is contained within the index.html and pulls data from the 'css' and 'js' folders
 
-  Run 'mongod' server
-
-Run the ruby script passing in the CSV file
-
-  ruby gt_scraper <Path to GT CSV file> 
-    (e.g. ruby gt_scraper ./data/report.csv)
-
-TODO:
-  Automating the retrieval of the CSV files from online
+The data scrapers are contained within 'src' folder and the actual data (map-reduced and raw) are kept in the 'data' folder
