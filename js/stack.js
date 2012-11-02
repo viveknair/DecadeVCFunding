@@ -110,7 +110,7 @@ var area = d3.svg.area()
     .x(function(d) { return d.x * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; })
-    .interpolate(['basis']);
+    .interpolate(['linear']);
 
 var vis_wrapper = d3.select("#chart")
   .append("svg")
