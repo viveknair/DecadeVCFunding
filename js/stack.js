@@ -9,7 +9,7 @@ var width = 800,
     height = 400,
     minYear = 2002,
     vizMarginLeft = 120,
-    sidebarMarginLeft = 1000;
+    sidebarMarginLeft = 975;
 
 var categoryMapping = {
   'advertising' : 'Advertising',
