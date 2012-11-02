@@ -2,7 +2,7 @@ var n = 0, // number of layers
     m = 20; // number of samples per layer
 
 var data = null,
-    color = d3.scale.category20();
+    color = d3.scale.category20c();
 var categories = new Object();
 var max, min = 0;
 var width = 800,
@@ -10,9 +10,9 @@ var width = 800,
     containerWidth = 1400,
     containerHeight = 500,
     minYear = 2002,
-    vizMarginLeft = 120,
+    vizMarginLeft = 180,
     vizMarginTop = 20,
-    sidebarMarginLeft = 975,
+    sidebarMarginLeft = 1045,
     sidebarMarginTop = 40;
 
 var categoryMapping = {
@@ -84,10 +84,6 @@ d3.json("data/json/crunchbase_data.json", function(json) {
       new_categories.push(categories[key]) 
     }
   }
-  
-  console.log(new_categories)
-
-
 
 var mx = m - 1,
     my = d3.max(data, function(d) {
@@ -214,7 +210,6 @@ legend_groups
 
   })
 
-
 var circle_legend = legend_groups
   .append('circle')
   .attr('class', function(d,i) {
@@ -222,7 +217,7 @@ var circle_legend = legend_groups
   })
   .attr('r', 7)
   .style('fill', function(d,i) {
-    return color(i);
+    return color(d.category_code);
   })
 
 var text_legend = legend_groups
@@ -242,7 +237,11 @@ var vis = vis_wrapper.append('svg:g')
   .attr("height", height)
   .attr("transform", 'translate(' + [vizMarginLeft , vizMarginTop] + ')'); 
 
-vis.selectAll("line")
+var grid_lines = vis.append('svg:g')
+  .attr('class', 'grid_lines_group')
+
+grid_lines
+  .selectAll("line")
     .data(y_scale.ticks(10))
     .enter().append("line")
     .attr("class", "cols")
@@ -252,6 +251,23 @@ vis.selectAll("line")
     .attr("y2", y_scale)
     .style("stroke", "#dddddd");
 
+var y_axis_label = vis.append('svg:g')
+  .attr('class', 'y_label')
+
+y_axis_label
+  .append('svg:text')
+  .text('Funding Amount in Dollars')
+  .attr('transform', 'rotate(270) translate(' + [-240, -130] + ')');
+
+var x_axis_label = vis.append('svg:g')
+  .attr('class', 'x_label')
+
+x_axis_label
+  .append('svg:text')
+  .text('Year of Funding')
+  .attr('transform', 'translate(' + [containerWidth / 4, containerHeight - 60] + ')');
+
+
 vis.selectAll("path.industries")
     .data(data)
   .enter().append("path")
@@ -259,7 +275,7 @@ vis.selectAll("path.industries")
       return 'industry-' + d[m-1].category_code;
     })
     .style("fill", function(d, i) { 
-      return color(i); 
+      return color(d[m-1].category_code); 
     })
 
     .transition()
