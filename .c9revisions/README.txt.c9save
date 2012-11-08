@@ -1,0 +1,1 @@
+{"ts":1352333854139,"silentsave":true,"restoring":false,"patch":[[{"diffs":[[1,"The visualization is contained within the index.html and pulls data from the 'css' and 'js' folders\n\nThe data scrapers are contained within 'src' folder and the actual data (map-reduced and raw) are kept in the 'data' folder\n"]],"start1":0,"start2":0,"length1":0,"length2":225}]],"length":225}
